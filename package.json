@@ -1,0 +1,31 @@
+{
+  "name": "powerusagealert",
+  "version": "1.0.0",
+  "description": "Alert notification to owner of room or property that power and water usage consumption is reach the limited.",
+  "main": "index.js",
+  "dependencies": {
+    "@line/bot-sdk": "^5.0.1",
+    "dotenv": "^4.0.0",
+    "mysql": "^2.15.0",
+    "nodemailer": "^4.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rovinei/ESCOTT-NOTIFIER.git"
+  },
+  "keywords": [
+    "Linebot",
+    "Alert",
+    "IOT"
+  ],
+  "author": "Rovinei",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rovinei/ESCOTT-NOTIFIER/issues"
+  },
+  "homepage": "https://github.com/rovinei/ESCOTT-NOTIFIER#readme"
+}

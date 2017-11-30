@@ -1,4 +1,6 @@
 const line = require('@line/bot-sdk');
+var https = require('https');
+var querystring = require('querystring');
 var exception = require('../exceptions/LineBotException');
 
 const client = new line.Client({
@@ -9,6 +11,51 @@ const client = new line.Client({
 function LineBot() {
 	this.message = "";
 	this.recipients = [];
+}
+
+LineBot.prototype.issueChannelAccessToken = function(){
+	var requestOptions = {
+		host: "api.line.me",
+		path: "/v2/oauth/accessToken",
+		port: 443,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded"
+		}
+	};
+
+	var postData = querystring.stringify({
+		"grant_type": "client_credentials",
+		"client_id": process.env.LINE_BOT_CHANNEL_ID,
+		"client_secret": process.env.LINE_BOT_CHANNEL_SECRET
+	});
+
+	console.log(postData);
+
+	return new Promise(function(resolve, reject){
+		var request = https.request(requestOptions, function(response){
+			var result = "";
+			console.log(`STATUS: ${response.statusCode}`);
+		  	console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+		  	response.setEncoding('utf8');
+		  	response.on('data', (chunk) => {
+		    	console.log(`BODY: ${chunk}`);
+		    	result = result + chunk;
+		  	});
+		  	response.on('end', () => {
+		    	console.log('No more data in response.');
+		    	resolve(result);
+		  	});
+		});
+
+		request.on('error', (e) => {
+		 	console.error(`problem with request: ${e.message}`);
+		 	reject(e.message);
+		});
+
+		request.write(postData);
+		request.end();
+	});
 }
 
 LineBot.prototype.prepareMessage = function(message=null, recipients=null) {
