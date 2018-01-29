@@ -1,19 +1,16 @@
 const nodemailer = require('nodemailer');
-
 const smtpConfig = {
-    pool: true,
-    maxConnections: 1000,
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // upgrade later with STARTTLS
+    pool: true
+    , maxConnections: 1000
+    , host: 'smtp.gmail.com'
+    , port: 587
+    , secure: false, // upgrade later with STARTTLS
     auth: {
-        user: process.env.SENDER_MAIL,
-        pass: process.env.MAIL_PASSWORD
+        user: process.env.SENDER_MAIL
+        , pass: process.env.MAIL_PASSWORD
     }
 };
-
-var htmlMailTemplate = 
-`<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+var htmlMailTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -45,10 +42,10 @@ var htmlMailTemplate =
                                                 Current power usage
                                             </th>
                                             <th align="center" valign="top">
-                                                Alert power usage
+                                                Limitation of power usage
                                             </th>
                                             <th align="center" valign="top">
-                                                Total different usage
+                                                Total over usage
                                             </th>
                                         </tr>
                                     </thead>
@@ -68,17 +65,17 @@ var htmlMailTemplate =
                         </tr>
                         <tr>
                             <td align="center" valign="top">
-                                <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailBody">
+                                <table border="1" cellpadding="20" cellspacing="0" width="100%" id="emailBody">
                                     <thead>
                                         <tr>
                                             <th align="center" valign="top">
                                                 Current water usage
                                             </th>
                                             <th align="center" valign="top">
-                                                Alert water usage
+                                                Limitation of water usage
                                             </th>
                                             <th align="center" valign="top">
-                                                Total different usage
+                                                Total over usage
                                             </th>
                                         </tr>
                                     </thead>
@@ -103,48 +100,39 @@ var htmlMailTemplate =
     </body>
 </html>`;
 
-function Mail(){
+function Mail() {
     this.mailTransporter = nodemailer.createTransport(smtpConfig);
 }
-
-Mail.prototype.formatHTML = function(string, values){
+Mail.prototype.formatHTML = function (string, values) {
     var args = values;
-    return string.replace(/{(\d+)}/g, function(match, number) { 
-      return typeof args[number] != 'undefined'
-        ? args[number]
-        : match
-      ;
+    return string.replace(/{(\d+)}/g, function (match, number) {
+        return typeof args[number] != 'undefined' ? args[number] : match;
     });
 }
-
-Mail.prototype.sendMail = function(mailOptions){
+Mail.prototype.sendMail = function (mailOptions) {
     var mailTransporter = this.mailTransporter;
     var mailMessage = mailOptions;
     console.log("MAILED");
-    return new Promise(function(resolve, reject){
-        if(mailTransporter.isIdle()) {
-            mailTransporter.sendMail(mailMessage, function(err){
-                if(err){
+    return new Promise(function (resolve, reject) {
+        if (mailTransporter.isIdle()) {
+            mailTransporter.sendMail(mailMessage, function (err) {
+                if (err) {
                     reject(err);
-                }else{
+                }
+                else {
                     resolve(200);
                 }
             });
-        }else{
+        }
+        else {
             resolve(201);
         }
     });
 }
-
-Mail.prototype.closeMailPoolConnection = function(){
+Mail.prototype.closeMailPoolConnection = function () {
     this.mailTransporter.close();
 }
-
 module.exports = {
-    Mail: Mail,
-    htmlMailTemplate: htmlMailTemplate
+    Mail: Mail
+    , htmlMailTemplate: htmlMailTemplate
 };
-
-
-
-
